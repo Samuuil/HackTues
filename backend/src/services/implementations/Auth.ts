@@ -17,7 +17,7 @@ export class Auth implements IAuth{ //TODO: (importance level 1) replace with th
 
     async getUserTokens(userId: string): Promise<strings> {
         // return externalService.getUserTokens(userId)
-        return ["1"]
+        return ["hi"]
     }
 
      async issueToken(userId: string): Promise<string> {
