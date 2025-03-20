@@ -10,6 +10,8 @@ export default function HomeScreen() {
     router.push(`/room/${id}`); // This will navigate to the RoomScreen with the corresponding id
   };
 
+  
+
   return (
     <View className="flex-1 items-center bg-lightBackground p-5">
       <Text className="text-2xl font-bold text-gray-700 mt-5 mb-5">Home Page</Text>
