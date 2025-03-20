@@ -1,8 +1,7 @@
-<<<<<<< HEAD
+
 node_modules
 /node_modules
-=======
-# Ignore common system files
+
 .DS_Store
 Thumbs.db
 
@@ -81,5 +80,4 @@ findings/
 poc_videos/
 notes.txt
 
->>>>>>> dani_backend
 .qodo
