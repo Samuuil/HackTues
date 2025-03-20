@@ -14,8 +14,13 @@
     "@elysiajs/swagger": "^1.2.2",
     "@elysiajs/websocket": "^0.2.8",
     "@prisma/client": "6.5.0",
+    "@types/nodemailer": "^6.4.17",
     "@types/ws": "^8.18.0",
+    "dotenv": "^16.4.7",
     "elysia": "^1.2.25",
+    "emailjs-com": "^3.2.0",
+    "mailerjs": "^1.1.1",
+    "nodemailer": "^6.10.0",
     "prisma": "^6.5.0",
     "ws": "^8.18.1"
   }

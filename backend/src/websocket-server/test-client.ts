@@ -5,26 +5,26 @@ const ws = new WebSocket("ws://localhost:8080");
 ws.on("open", () => {
     console.log("Connected to WebSocket server");
 
-    // Send the role of the client to the server
     ws.send(JSON.stringify({
-        type: "setRole", // Tell the server we're setting the role
+        type: "setRole", 
         payload: {
-            role: "guardian" // Assign the client role (e.g., "guarded")
+            role: "guarded" 
         }
     }));
 
-    // Handle incoming messages from the server
+
+
     ws.on("message", (data: string) => {
         console.log("Received:", data.toString());
     });
 
-    // Send a notification after 2 seconds (to test the "notify" functionality)
+
     setTimeout(() => {
         ws.send(JSON.stringify({
             type: "notify",
-            payload: {
-                author: "Guardian", // Author is "Guardian", so it should be filtered
-                data: { temperature: 22, humidity: 50 }
+            payload: { 
+                data: { is_alive: "dead", something: "no" },
+                member_id: "d2df47d2-9691-41bb-a622-031e289c986d"
             }
         }));
     }, 2000);
