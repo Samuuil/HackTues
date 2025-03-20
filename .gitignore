@@ -1,3 +1,85 @@
+<<<<<<< HEAD
 node_modules
 /node_modules
+=======
+# Ignore common system files
+.DS_Store
+Thumbs.db
+
+
+# Ignore log files
+*.log
+*.log.*
+logs/
+debug.log
+error.log
+
+# Ignore environment and secrets
+.env
+.env.*
+secrets.*
+config/*.json
+config/*.yml
+config/*.toml
+
+# Ignore Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+venv/
+*.egg-info/
+pip-log.txt
+
+# Ignore Node.js files
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore Go build files
+bin/
+pkg/
+*.exe
+*.out
+
+# Ignore Rust build files
+target/
+Cargo.lock
+
+# Ignore compiled binaries
+*.o
+*.so
+*.a
+*.dylib
+*.dll
+*.exe
+*.class
+*.jar
+
+# Ignore security tools output
+nmap_scan.xml
+*.nessus
+burp_state.json
+recon_results/
+metasploit_logs/
+hydra_output.txt
+john.pot
+hashes.txt
+dirb_results/
+wfuzz_results/
+sqlmap_logs/
+
+# Ignore wordlists and dictionaries
+wordlists/
+rockyou.txt
+custom_wordlist.txt
+
+# Ignore reports and screenshots
+reports/
+screenshots/
+findings/
+poc_videos/
+notes.txt
+
+>>>>>>> dani_backend
 .qodo
