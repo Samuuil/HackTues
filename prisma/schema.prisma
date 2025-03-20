@@ -45,9 +45,19 @@ model Room {
 }
 
 model User {
-  id   String @id @default(uuid())
-  name String @unique
+  id      String  @id @default(uuid())
+  name    String  @unique
 
+  agents  Agent[]
   rooms   Room[]
   members Member[]
 }
+
+model Agent {
+  id     String @id @default(uuid())
+  name   String
+  value  String
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+ 

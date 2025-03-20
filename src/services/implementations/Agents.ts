@@ -1,28 +1,37 @@
 import type { VPromise } from "../../utils/types/customPromises/VPromise";
 import type { IAgentsService } from "../interfaces/Agents";
 import type { strings } from "../../utils/types/strings";
+import { PrismaClient } from "@prisma/client";
+import type { SPromise } from "../../utils/types/customPromises/stringPromise";
 
 export class InMemoryAgents implements IAgentsService {
-    private userAgents: Map<string, Set<string>> = new Map();
 
-    async create(userId: string): VPromise {
-        if (!this.userAgents.has(userId)) {
-            this.userAgents.set(userId, new Set());
-        }
-        const agentId = `agent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        this.userAgents.get(userId)!.add(agentId);
+    private client = new PrismaClient()
+    
+    async create(userId: string, agentName: string): SPromise {
+        return  (await this.client.agent.create({
+            data: {
+                name: agentName,
+                userId: userId,
+                value: "h"
+           } 
+        })).value
     }
 
-    async delete(userId: string, agentName: string): VPromise {
-        if (!this.userAgents.has(userId)) {
-        }
-        this.userAgents.delete(userId);
+    async delete(userId: string,agentName: string): VPromise {
+        await this.client.agent.deleteMany({
+            where: {
+                name: agentName,
+                userId: userId
+            }
+        })
     }
 
     async getUserAgents(userId: string): Promise<strings> {
-        if (!this.userAgents.has(userId)) {
-            return [];
-        }
-        return Array.from(this.userAgents.get(userId)!);
+        return (await this.client.agent.findMany({
+            where: {
+                userId: userId
+            }
+        })).map(t => t.value)
     }
 }
