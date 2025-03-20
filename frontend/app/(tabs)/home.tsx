@@ -1,23 +1,35 @@
-import { View, TouchableOpacity, Text, Image } from "react-native";
+import React from "react";
+import { View, TouchableOpacity, Text } from "react-native";
 import { useRouter } from "expo-router";
-import { colors } from "@/theme/colors";
+import { colors } from "@/theme/colors"; // Import colors from your theme
 
 export default function HomeScreen() {
   const router = useRouter();
 
+  const handleBoxPress = (id: number) => {
+    router.push(`/room/${id}`); // This will navigate to the RoomScreen with the corresponding id
+  };
+
   return (
-    <View style={{ flex: 1, alignItems: "center", backgroundColor: colors.lightBackground, padding: 20 }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold", color: colors.gray, marginTop: 20, marginBottom: 20 }}>Home Page</Text>
+    <View className="flex-1 items-center bg-lightBackground p-5">
+      <Text className="text-2xl font-bold text-gray-700 mt-5 mb-5">Home Page</Text>
 
       {[1, 2, 3].map((num) => (
-        <View key={num} style={{ width: "100%", height: 100, backgroundColor: colors.cardBg, borderRadius: 10, marginBottom: 20, flexDirection: "row", alignItems: "center", padding: 10 }}>
-          <Image source={require("@/assets/images/i_orkestura_da_sviri.jpeg")} style={{ width: 50, height: 50, marginRight: 10 }} />
-          <Text style={{ fontSize: 16, color: colors.gray, flex: 1 }}>Placeholder Text for Box {num}</Text>
-        </View>
+        <TouchableOpacity
+          key={num}
+          className="w-full h-24 bg-cardBg rounded-lg mb-5 flex-row items-center p-3 border border-gray-300"
+          onPress={() => handleBoxPress(num)} // Navigate to the corresponding room when the box is pressed
+        >
+          <Text className="text-lg text-gray-700 flex-1">
+            Placeholder Text for Box {num}
+          </Text>
+        </TouchableOpacity>
       ))}
 
-      <TouchableOpacity style={{ width: "100%", height: 100, backgroundColor: colors.highlight, borderRadius: 10, alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ color: "white", fontSize: 40, fontWeight: "bold" }}>+</Text>
+      <TouchableOpacity
+        className="w-full h-24 bg-highlight rounded-lg items-center justify-center bg-primary"
+      >
+        <Text className="text-white text-4xl font-bold">+</Text>
       </TouchableOpacity>
     </View>
   );

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import { colors } from "@/theme/colors";
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -29,32 +28,20 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: colors.background,
-        paddingHorizontal: 20,
-      }}
-    >
-      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20, color: colors.text }}>
+    <View className="flex-1 items-center px-5 pt-24 bg-background">
+      <Text className="text-2xl font-bold mb-5 text-text">
         Register
       </Text>
 
       {/* Email Input */}
-      <View style={{ width: "80%", maxWidth: 300, marginBottom: 16 }}>
-        {errorMessage.email ? (
-          <Text style={{ fontSize: 12, marginBottom: 4, color: colors.error }}>
-            {errorMessage.email}
-          </Text>
-        ) : null}
-        <View style={{ flexDirection: "row", alignItems: "center", height: 48, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.inputBg }}>
-          <MaterialIcons name="email" size={24} color={colors.text} style={{ marginRight: 8 }} />
+      <View className="w-full max-w-xs mb-4">
+        {errorMessage.email ? <Text className="text-xs mb-1 ml-2 text-error">{errorMessage.email}</Text> : null}
+        <View className="flex-row items-center h-12 rounded-lg px-3 bg-inputBg">
+          <MaterialIcons name="email" size={24} color="currentColor" className="mr-3 text-text" />
           <TextInput
-            style={{ flex: 1, fontSize: 16, color: colors.text }}
+            className="flex-1 text-base text-text"
             placeholder="Email"
-            placeholderTextColor={colors.text}
+            placeholderTextColor="currentColor"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -63,18 +50,14 @@ export default function RegisterScreen() {
       </View>
 
       {/* Username Input */}
-      <View style={{ width: "80%", maxWidth: 300, marginBottom: 16 }}>
-        {errorMessage.username ? (
-          <Text style={{ fontSize: 12, marginBottom: 4, color: colors.error }}>
-            {errorMessage.username}
-          </Text>
-        ) : null}
-        <View style={{ flexDirection: "row", alignItems: "center", height: 48, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.inputBg }}>
-          <MaterialIcons name="person" size={24} color={colors.text} style={{ marginRight: 8 }} />
+      <View className="w-full max-w-xs mb-4">
+        {errorMessage.username ? <Text className="text-xs mb-1 ml-2 text-error">{errorMessage.username}</Text> : null}
+        <View className="flex-row items-center h-12 rounded-lg px-3 bg-inputBg">
+          <MaterialIcons name="person" size={24} color="currentColor" className="mr-3 text-text" />
           <TextInput
-            style={{ flex: 1, fontSize: 16, color: colors.text }}
+            className="flex-1 text-base text-text"
             placeholder="Username"
-            placeholderTextColor={colors.text}
+            placeholderTextColor="currentColor"
             value={username}
             onChangeText={setUsername}
             autoCapitalize="none"
@@ -83,18 +66,14 @@ export default function RegisterScreen() {
       </View>
 
       {/* Password Input */}
-      <View style={{ width: "80%", maxWidth: 300, marginBottom: 16 }}>
-        {errorMessage.password ? (
-          <Text style={{ fontSize: 12, marginBottom: 4, color: colors.error }}>
-            {errorMessage.password}
-          </Text>
-        ) : null}
-        <View style={{ flexDirection: "row", alignItems: "center", height: 48, borderRadius: 8, paddingHorizontal: 10, backgroundColor: colors.inputBg }}>
-          <MaterialIcons name="lock" size={24} color={colors.text} style={{ marginRight: 8 }} />
+      <View className="w-full max-w-xs mb-4">
+        {errorMessage.password ? <Text className="text-xs mb-1 ml-2 text-error">{errorMessage.password}</Text> : null}
+        <View className="flex-row items-center h-12 rounded-lg px-3 bg-inputBg">
+          <MaterialIcons name="lock" size={24} color="currentColor" className="mr-3 text-text" />
           <TextInput
-            style={{ flex: 1, fontSize: 16, color: colors.text }}
+            className="flex-1 text-base text-text"
             placeholder="Password"
-            placeholderTextColor={colors.text}
+            placeholderTextColor="currentColor"
             secureTextEntry
             value={password}
             onChangeText={setPassword}
@@ -103,26 +82,14 @@ export default function RegisterScreen() {
       </View>
 
       {/* Register Button */}
-      <Pressable
-        style={{
-          width: "80%",
-          maxWidth: 300,
-          paddingVertical: 12,
-          borderRadius: 8,
-          alignItems: "center",
-          backgroundColor: colors.primary,
-        }}
-        onPress={handleRegister}
-      >
-        <Text style={{ fontSize: 18, fontWeight: "bold", color: "#fff" }}>
-          Register
-        </Text>
+      <Pressable className="w-full max-w-xs py-3 rounded-lg items-center mt-3 bg-primary" onPress={handleRegister}>
+        <Text className="text-lg font-bold text-white">Register</Text>
       </Pressable>
 
       {/* Login Link */}
-      <Text style={{ marginTop: 20, fontSize: 16, color: colors.text }}>
-        Already have an account?{" "}
-        <Text style={{ fontWeight: "bold", color: colors.primary }} onPress={handleLogin}>
+      <Text className="mt-6 text-base">
+        <Text className="text-text">Already have an account? </Text>
+        <Text className="font-bold text-primary" onPress={handleLogin}>
           Login
         </Text>
       </Text>
