@@ -23,7 +23,7 @@ export default function RegisterScreen() {
       if (!password) setErrorMessage((prev) => ({ ...prev, password: "Please enter a password." }));
       return;
     }
-
+    ///VAJEN KOMENTAR TUKA TRQBVA DA VIDQ STATUS KODA NA RESPONSE-A
     // try {
     //   const response = await client.auth.signup.post({ username, password });
 

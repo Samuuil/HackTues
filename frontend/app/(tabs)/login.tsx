@@ -10,6 +10,8 @@ import axios from 'axios';
 const router = useRouter();
 
 async function login(username: string, password: string) {
+  //vajen komentar trqbva da pazim id-to na usera, za da moje v posledstvie 
+  //da se izpolzva za vzimane na rooms i babi
   // try {
   //   const response = await client.auth.login.post({ username, password });
 
