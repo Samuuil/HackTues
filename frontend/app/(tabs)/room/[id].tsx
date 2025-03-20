@@ -1,10 +1,11 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { client } from "../../../../backend/src/index"
+
 
 export default function RoomScreen() {
   const { id } = useLocalSearchParams(); // ✅ Get the dynamic room ID
   const router = useRouter();
-
   // Simulate a dynamic list of items in the room (can be fetched from an API)
   const items = ["Item 1", "Item 2", "Item 3", "Item 4"]; // Example items
 

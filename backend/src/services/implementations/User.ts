@@ -37,7 +37,7 @@ export class PostgresConnectedUserService implements IUser{
       console.log("j")
         await this.client.user.create({
             data: {
-                name: data.password, 
+                name: data.username, 
            }
        }) 
     }

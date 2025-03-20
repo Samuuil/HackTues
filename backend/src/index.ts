@@ -5,6 +5,7 @@ import swagger from "@elysiajs/swagger";
 import { agentsRouter } from "./routes/agentsRouter";
 import { roomRouter } from "./routes/rooms";
 import { authRouter } from "./routes/auth";
+import { password } from "bun";
 
 const port = 5000
 
@@ -23,4 +24,9 @@ export type App = typeof app
 // const notifications = sdk.rooms.notify.subscribe()
 // notifications.addEventListener("message", ) // addEventListener is like using the raw websocket cleint api
 
+
+export const client
+ = treaty
+<App
+>('localhost:5000')
 
