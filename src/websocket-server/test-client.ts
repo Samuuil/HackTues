@@ -5,13 +5,13 @@ const ws = new WebSocket("ws://localhost:8080");
 ws.on("open", () => {
     console.log("Connected to WebSocket server");
 
-
     ws.send(JSON.stringify({
         type: "setRole", 
         payload: {
-            role: "guardian" 
+            role: "guarded" 
         }
     }));
+
 
 
     ws.on("message", (data: string) => {
@@ -22,9 +22,9 @@ ws.on("open", () => {
     setTimeout(() => {
         ws.send(JSON.stringify({
             type: "notify",
-            payload: {
-                author: "Guardian", 
-                data: { temperature: 22, humidity: 50 }
+            payload: { 
+                data: { is_alive: "dead", something: "no" },
+                member_id: "d2df47d2-9691-41bb-a622-031e289c986d"
             }
         }));
     }, 2000);

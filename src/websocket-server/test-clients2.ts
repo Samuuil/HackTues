@@ -1,4 +1,5 @@
 import { WebSocket } from "ws";
+import { context } from "../context";
 
 const ws = new WebSocket("ws://localhost:8080");
 
@@ -9,26 +10,26 @@ ws.on("open", () => {
     ws.send(JSON.stringify({
         type: "setRole", 
         payload: {
-            role: "guarded" 
+            role: "guardian" 
         }
     }));
 
 
     ws.on("message", (data: string) => {
+        context
         console.log("Received:", data.toString());
     });
 
-    // Send a notification after 2 seconds (to test the "notify" functionality)
-    /*setTimeout(() => {
+    // Send a notification after 2 seconds (to test thse "notify" functionality)
+    setTimeout(() => {
         ws.send(JSON.stringify({
-            type: "notify",
+            type: "authenticate",
             payload: {
-                author: "Guardian", // Author is "Guardian", so it should be filtered
-                data: { temperature: 22, humidity: 50 }
+                client_id: "4e0973cf-8bcb-4fb5-bb16-4026b4ba852f"
             }
         }));
     }, 2000);
-    */
+    
 });
 
 ws.on("close", () => console.log("Disconnected"));
