@@ -1,0 +1,9 @@
+# ZA DANI 
+#
+#
+# Da  napravish websocket server koito mozhe da ima 2 suobshteniq 
+#
+#
+# purviq e onNewData kato websocketa poluchi tova suobshtenie da vikne daatservice da vikne addData i da prati kum vsichki clienti newData suobshtnie 
+#
+# vtpriq e notify kato server katop poluchi tova da pravi newNotifcation kum vsichki clieti s payload-a koito e v originalnoto suobshtenie
