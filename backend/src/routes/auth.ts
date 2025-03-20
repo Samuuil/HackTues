@@ -44,11 +44,15 @@ export const authRouter = new Elysia({ prefix: "/auth" })
             const r = await (await store.context.userService.findByUsername(body.username)).tryReturningTheSameType({
                 ifNone: async () => {
                     set.status = 404
-                    return "no user with such credentials"
+                    return {message: "no user with such credentials"}
                 },
                 ifNotNone: async (v) => {
                     // if(await context.authService.getUserPassword(v.id) === body.password)
-                    return await context.authService.issueToken(v.id)
+                    return  {
+                        message: "",
+                        token: await context.authService.issueToken(v.id),
+                        id: v.id
+                    }
                 }
             })
             console.log(r)
