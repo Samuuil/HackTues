@@ -4,6 +4,8 @@ export type Message<T> = {
   payload: T;
 };
 
+
+
 export class WebSocketClient<T extends Record<string, Message<unknown>>> {
   private ws: WebSocket | null = null;
   private url: string;
@@ -63,12 +65,12 @@ export class WebSocketClient<T extends Record<string, Message<unknown>>> {
     setTimeout(() => this.start(), delay); // Start a new connection attempt
   }
 
-  send<K extends keyof T>(type: K, data: T[K]["data"]) {
+  send<K extends keyof T>(type: K, data: T[K]["payload"]) {
     if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
       console.error("Cannot send message, WebSocket is not open.");
       return;
     }
-    const message: Message<T[K]["data"]> = { type, data };
+    const message: Message<T[K]["payload"]> = { type, data };
     this.ws.send(JSON.stringify(message));
   }
 

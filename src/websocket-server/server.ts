@@ -4,6 +4,30 @@ import { context } from "../context";
 const wss = new WebSocketServer({ port: 8081 });
 const clientRoles = new Map<WebSocket, string>(); // Map to store client roles
 
+export const wsObject = {
+    newData: {
+        type: "newData",
+        payload: {
+            gps: {
+                lon: 3,
+                lat: 3
+            },
+            gyro: {
+                x: 3,
+                y: 3,
+                z: 3,
+            },
+            accelero: {
+                x: 3,
+                y: 4,
+                z: 5
+            },
+            sound: "", //will be file 
+        }
+    }
+}
+
+
 wss.on("connection", (ws) => {
   console.log("Client connected");
 
