@@ -1,108 +1,90 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
-import * as Notifications from 'expo-notifications';
+import React, { useEffect, useState } from "react";
+import { View, Text, ActivityIndicator } from "react-native";
+import * as Notifications from "expo-notifications";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getMemberId } from "@/utils/getMemberId";
+import { registerForPushNotificationsAsync } from "@/utils/notifications";
 
 export default function App() {
+  const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
-  const [message, setMessage] = useState<{
-    gps: {
-      long: number;
-      lat: number;
-    };
-    bpm: number;
-  }>({
-    gps: {
-      long: 0,
-      lat: 0,
-    },
-    bpm: 0, // Initialize bpm as a number
-  });
+  const [message, setMessage] = useState<{ gps: { long: number; lat: number }; bpm: number }>({ gps: { long: 0, lat: 0 }, bpm: 0 });
 
   useEffect(() => {
-    // Initialize WebSocket connection
-    const socket = new WebSocket('ws://localhost:8080');
+    registerForPushNotificationsAsync().then(token => {
+      if (token) setExpoPushToken(token);
+    });
+  }, []);
 
-    // WebSocket event listeners
-    socket.onopen = () => {
+  useEffect(() => {
+    const socket = new WebSocket("ws://209.38.192.145:8080");
+
+    socket.onopen = async () => {
       setConnected(true);
-      console.log('Connected to WebSocket server');
+      console.log("Connected to WebSocket server");
 
-      // Authenticate after 2 seconds
-      setTimeout(() => {
+      try {
+        const memberId = await getMemberId();
+        const roomId = await AsyncStorage.getItem("roomId");
+
         socket.send(
           JSON.stringify({
-            type: 'authenticate',
-            payload: {
-              member_id: '4e0973cf-8bcb-4fb5-bb16-4026b4ba852f',
-              room_id: 'feda0943-fde0-4020-b5d5-1cdc3a588340',
-            },
+            type: "authenticate",
+            payload: { member_id: memberId, room_id: roomId },
           })
         );
-      }, 2000);
-
-      // Send new data periodically
-      setInterval(() => {
-        socket.send(
-          JSON.stringify({
-            type: 'newData',
-            payload: {
-              member_id: '4e0973cf-8bcb-4fb5-bb16-4026b4ba852f',
-              newData: {
-                gps: {
-                  long: 9,
-                  lat: 9,
-                },
-                bpm: Math.floor(Math.random() * (80 - 60 + 1)) + 60, // Random bpm value between 60 and 80
-              },
-            },
-          })
-        );
-      }, 2000);
+      } catch (error) {
+        console.error("Error retrieving data:", error);
+      }
     };
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data); // Only parse once
-      console.log('Received:', data);
+    socket.onmessage = async (event) => {
+      try {
+        console.log("Received:", event.data);
+        const data = JSON.parse(event.data);
 
-      // Check if newData exists
-      if (data.newData) {
-        // Update the state with the new data
-        setMessage(data.newData);
+        if (data.payload.data) {
+          setMessage(data.payload.data);
 
-        // Trigger notification if bpm exceeds 65
-        if (data.newData.bpm > 65) {
-          Notifications.scheduleNotificationAsync({
-            content: {
-              title: 'Pulse Alert!',
-              body: `BPM is high: ${data.newData.bpm}. GPS: Long - ${data.newData.gps.long}, Lat - ${data.newData.gps.lat}`,
-              sound: true,
-            },
-            trigger: null, // Show the notification immediately
-          });
+          // Send a local notification if BPM is too high
+          if (data.payload.data.bpm > 25) {
+            await Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Pulse Alert!",
+                body: `BPM is high: ${data.payload.data.bpm}. GPS: Long - ${data.payload.data.gps.long}, Lat - ${data.payload.data.gps.lat}`,
+                sound: true,
+              },
+              trigger: null,
+            });
+          }
+        } else {
+          console.warn("Received unknown message:", data);
         }
-      } else {
-        console.log('Unknown message type:', data);
+      } catch (e) {
+        console.error("Error parsing WebSocket message:", e);
       }
     };
 
     socket.onclose = () => {
       setConnected(false);
-      console.log('Disconnected from WebSocket server');
+      console.log("Disconnected from WebSocket server");
     };
 
-    // Cleanup WebSocket connection when the component is unmounted
     return () => {
-      if (socket) {
-        socket.close();
-      }
+      socket.close();
     };
   }, []);
 
   return (
     <View className="flex-1 justify-center items-center p-5">
-      <Text className={`text-2xl mb-4 ${connected ? 'text-green-600' : 'text-red-600'}`}>
-        {connected ? 'Connected' : 'Disconnected'}
-      </Text>
+      {connected ? (
+        <Text className="text-2xl mb-4 text-green-600">Connected</Text>
+      ) : (
+        <>
+          <ActivityIndicator size="large" color="red" />
+          <Text className="text-2xl mb-4 text-red-600">Disconnected</Text>
+        </>
+      )}
       <Text className="text-lg text-center mb-5">
         {`GPS: Long - ${message.gps.long}, Lat - ${message.gps.lat}\nBPM: ${message.bpm}`}
       </Text>

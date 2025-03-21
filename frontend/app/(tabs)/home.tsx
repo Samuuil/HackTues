@@ -65,7 +65,7 @@ export default function HomeScreen() {
   };
 
   const generateRoomName = () => {
-    return Math.floor(Math.random() * 1000000) + 1; // Generates a number between 1 and 1,000,000
+    return Math.floor(Math.random() * 1000) + 1; // Generates a number between 1 and 1,000,000
   };
 
   const handleCreateRoom = async () => {
@@ -80,7 +80,7 @@ export default function HomeScreen() {
       const { data } = await axios.post(
         `${url}/rooms/`,
         {
-          roomPassword: roomName,
+          roomPassword: roomName.toString(),
           userId: userId,
         },
         {

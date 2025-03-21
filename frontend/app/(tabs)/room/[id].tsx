@@ -52,6 +52,7 @@ export default function RoomScreen() {
     // Ensure `id` is a string before calling the API
     if (id && token) {
       const roomId = Array.isArray(id) ? id[0] : id; // Handle the case when `id` is an array
+      AsyncStorage.setItem
       getMembers(roomId, token).then((data) => setItems(data));
     }
   }, [id, token]); // Re-fetch members whenever the room ID or token changes

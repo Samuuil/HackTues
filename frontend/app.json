@@ -33,7 +33,17 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#ffffff",
+          "androidMode": "default",
+          "androidCollapsedTitle": "New notification"
+        }
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
@@ -45,6 +55,7 @@
       "eas": {
         "projectId": "111d124c-0854-47fc-89c4-672067fa7c68"
       }
-    }
+    },
+    "owner": "ssamiko"
   }
 }
