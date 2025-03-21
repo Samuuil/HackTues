@@ -4,16 +4,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Fetch room members
-async function getMembers(roomId: string) {
+// Fetch room members dynamically using the room ID
+async function getMembers(roomId: string, token: string) {
   try {
-    const token = await AsyncStorage.getItem("token"); // Retrieve the stored token
     const options = {
       method: "GET",
       url: `http://localhost:5000/rooms/members/${roomId}`,
       headers: {
         bearer: `Bearer ${token}`,
-        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     };
@@ -27,16 +25,33 @@ async function getMembers(roomId: string) {
   }
 }
 
-export default function RoomScreen() { // works with these params
-  const  id  = "feda0943-fde0-4020-b5d5-1cdc3a588340"; // Get the room ID from the URL
+export default function RoomScreen() {
+  const { id } = useLocalSearchParams(); // Get the room ID from the URL
   const router = useRouter();
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState<{ id: string; name: string }[]>([]); // Define state type correctly
+  const [token, setToken] = useState<string | null>(null);
+
+  // Fetch token from AsyncStorage
+  useEffect(() => {
+    const fetchToken = async () => {
+      const fetchedToken = await AsyncStorage.getItem("token");
+      if (fetchedToken) {
+        setToken(fetchedToken);
+      } else {
+        console.error("No token found in storage");
+      }
+    };
+
+    fetchToken();
+  }, []);
 
   useEffect(() => {
-    if (id) {
-      getMembers(id).then((data) => setItems(data));
+    // Ensure `id` is a string before calling the API
+    if (id && token) {
+      const roomId = Array.isArray(id) ? id[0] : id; // Handle the case when `id` is an array
+      getMembers(roomId, token).then((data) => setItems(data));
     }
-  }, [id]);
+  }, [id, token]); // Re-fetch members whenever the room ID or token changes
 
   const handleBoxPress = (memberId: string) => {
     router.push(`/guarded/${memberId}`); // Navigate to the guarded member page
@@ -54,11 +69,11 @@ export default function RoomScreen() { // works with these params
           className="w-11/12 max-w-[350px] h-20 flex-row items-center p-4 mb-3 rounded-lg border-2 border-secondary bg-white"
         >
           {/* Member Image */}
-          <Image
+          {/* <Image
             source={require("@/assets/images/i_orkestura_da_sviri.jpeg")}
             className="w-12 h-12 rounded-full mr-3"
             resizeMode="cover"
-          />
+          /> */}
           <Text className="text-lg font-semibold text-text">{item.name}</Text>
         </TouchableOpacity>
       ))}

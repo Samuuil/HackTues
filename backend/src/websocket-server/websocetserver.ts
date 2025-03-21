@@ -86,6 +86,7 @@ async function handleGetData(ws: ExtendedWebSocket, payload: { member_id: string
 
     if (member.memberRole === "Guarded") {
       await addMemberEntry(payload.member_id, Date.now());
+      ws.send(JSON.stringify(payload))
     }
   } catch (error) {
     console.error("🚨 Error during authentication:", error);
@@ -114,6 +115,9 @@ async function handleAuthentication(ws: ExtendedWebSocket, payload: { member_id:
     if (member.memberRole === "Guarded") {
       await addMemberEntry(payload.member_id, Date.now());
     }
+
+    ws.send(JSON.stringify(payload))
+
   } catch (error) {
     console.error("🚨 Error during authentication:", error);
     ws.send("Error during authentication.");

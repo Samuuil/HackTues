@@ -35,9 +35,10 @@ async function login(username: string, password: string) {
 
   try {
     const { data } = await axios.request(options);
-    
+    console.log(data);
     if (data.token) {
       await AsyncStorage.setItem("token", data.token);
+      await AsyncStorage.setItem("id", data.id);
       console.log("Logged in successfully, token saved:", data.token);
       router.push("/home"); // Redirect after successful login
     } else {
