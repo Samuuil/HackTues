@@ -49,16 +49,15 @@ class Client {
   private wsClient: WebSocketClient;
   private member_id: string = "";
 
-  constructor(private handlers: ClientHandlers) {
+  constructor( handlers: ClientHandlers) {
       this.wsClient = new WebSocketClient("ws://localhost:8080", handlers);
   }
 
   async setUpClient(username : string, password: string, roomName: string) {
       const data = await client.auth.login.post({ username, password });
       this.token = data.data.token;
-      console.log("Authenticated", data);
 
-      const memberInfo = await client.rooms.getMemberByUsernameAndRoomName.post({
+      const memberInfo = await client.rooms.getMember.post({
         username,
         roomName
       },
@@ -68,7 +67,6 @@ class Client {
             bearer: 'Bearer ' + this.token
           }
       })
-      console.log(memberInfo);
   }
 
   authenticate(memberId: string, roomID: string) {
@@ -86,17 +84,5 @@ sendNotification(memberId: string, data: object, roomID: string) {
       });
   }
 }
-
-const handlers: ClientHandlers = {
-  onNewData: (v) => console.log("newData", v.payload.data),
-  onNewNotification: (v) => console.log("newNotification", v)
-};
-
-// const clientInstance = new Client(handlers);
-// const data = { "temperature": 25, "humidity": 50 };
-// clientInstance.setUpClient("sami", "", "AAAAAAAA").then(() => {
-//   setTimeout(() => clientInstance.authenticate("4e0973cf-8bcb-4fb5-bb16-4026b4ba852f", "feda0943-fde0-4020-b5d5-1cdc3a588340"), 1000);
-//   setTimeout(() => clientInstance.sendNotification("4e0973cf-8bcb-4fb5-bb16-4026b4ba852f", data,"feda0943-fde0-4020-b5d5-1cdc3a588340" ), 2000);
-// });
 
 export {Client}

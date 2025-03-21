@@ -31,7 +31,7 @@ function checkIfPersonFell() {
 new Client({
     onNewData(v) {
         readings.push(v);
-        console
+        console.log(v)
         checkIfPersonFell();
     },
     onNewNotification(v) {
