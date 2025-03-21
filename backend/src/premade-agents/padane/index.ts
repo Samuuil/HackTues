@@ -18,10 +18,10 @@ function checkIfPersonFell() {
     const significantBpmDrop = bpmDrop > 20; // Arbitrary threshold for BPM drop
     
     // Check sudden movement based on GPS distance
-    const dx = latestData.gps.x - previousData.gps.x;
-    const dy = latestData.gps.y - previousData.gps.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const significantMovement = distance > 5; // Arbitrary threshold for movement
+    // const dx = latestData.gps.x - previousData.gps.x;
+    // const dy = latestData.gps.y - previousData.gps.y;
+    // const distance = Math.sqrt(dx * dx + dy * dy);
+    // const significantMovement = distance > 5; // Arbitrary threshold for movement
     
     if (significantBpmDrop || significantMovement) {
         console.warn("Possible fall detected for member:", latest.payload.member_id);
