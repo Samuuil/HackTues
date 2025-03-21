@@ -20,8 +20,9 @@ class WebSocketClient {
       this.ws.on("open", () => {
           console.log("Connected to WebSocket server");
       });
-this.ws.on("message", (data: string) => {
-          const parsed = JSON.parse(data.toString()) as { type: string, payload: { member_id: string, room_id: string, data: object } };
+      this.ws.on("message", (data: string) => {
+        console.log("Data received", data);  
+        const parsed = JSON.parse(data.toString()) as { type: string, payload: { member_id: string, room_id: string, data: object } };
           console.log("Received:", parsed);
           switch (parsed.type) {
               case "newData":
@@ -49,7 +50,7 @@ class Client {
   private wsClient: WebSocketClient;
   private member_id: string = "";
 
-  constructor( handlers: ClientHandlers) {
+   constructor( handlers: ClientHandlers) {
       this.wsClient = new WebSocketClient("ws://localhost:8080", handlers);
   }
 

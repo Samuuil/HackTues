@@ -15,22 +15,22 @@ ws.on("open", () => {
         ws.send(JSON.stringify({
             type: "authenticate",
             payload: {
-                member_id: "d2df47d2-9691-41bb-a622-031e289c986d",
+                member_id: "4e0973cf-8bcb-4fb5-bb16-4026b4ba852f",
                 room_id: "feda0943-fde0-4020-b5d5-1cdc3a588340"
             }
         }));
     }, 1000);
     
-    setTimeout(() => {
+    setInterval(() => {
         ws.send(JSON.stringify({
-            type: "notify",
+            type: "newData",
             payload: { 
-                data: { is_out_of_bouns: "dead", has_fallen: "no" },
-                member_id: "d2df47d2-9691-41bb-a622-031e289c986d",
+                data: { bpm: 10, gps: { lon: 10, lat: 20 }, acce : { x: 421, y: 41, z: 4 }, gyro : { x: 421, y: 41, z: 4 } },
+                member_id: "4e0973cf-8bcb-4fb5-bb16-4026b4ba852f",
                 room_id: "feda0943-fde0-4020-b5d5-1cdc3a588340" 
             }
         }));
-    }, 2000);
+    }, 10000);
 });
 
 ws.on("close", () => console.log("Disconnected"));
