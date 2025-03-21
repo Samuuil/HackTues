@@ -37,15 +37,15 @@ wss.on("connection", async (ws: ExtendedWebSocket) => {
 
       switch (parsed.type) {
         case "newData":
-          await handleGetData(ws, parsed.payload);
+          await handleNotification(ws, parsed.type, parsed.payload);
           break;
 
         case "notify":
-          await handleNotification(ws, parsed.payload);
+          await handleNotification(ws, parsed.type, parsed.payload);
           break;
 
         case "authenticate":
-          await handleAuthentication(ws, parsed.payload);
+          await handleAuthentication(ws, parsed.type, parsed.payload);
           break;
 
         default:
@@ -67,7 +67,7 @@ wss.on("connection", async (ws: ExtendedWebSocket) => {
  * Handles authentication by registering the client and adding them to Redis if they are "Guarded".
  */
 
-async function handleGetData(ws: ExtendedWebSocket, payload: { member_id: string }) {
+async function handleGetData(ws: ExtendedWebSocket, type : string , payload: { member_id: string , room_id: string , data?: { [key: string]: number } }) {
   try {
     console.log(`🔔 Getting data from member_id: ${payload.member_id}`);
 
@@ -81,12 +81,19 @@ async function handleGetData(ws: ExtendedWebSocket, payload: { member_id: string
       ws.send("Member not found.");
       return;
     }
-
-    console.log(`✅ Client authenticated with member_id: ${ws.member_id}, role: ${member.memberRole}`);
+    const data = {
+      type: type,
+      payload: {
+        member_id: payload.member_id,
+        room_id: ws.room_id,
+        data: payload.data,
+      },
+    }
+    //console.log(`✅ Client authenticated with member_id: ${ws.member_id}, role: ${member.memberRole}`);
 
     if (member.memberRole === "Guarded") {
       await addMemberEntry(payload.member_id, Date.now());
-      ws.send(JSON.stringify(payload))
+      ws.send(JSON.stringify(data))
     }
   } catch (error) {
     console.error("🚨 Error during authentication:", error);
@@ -94,7 +101,7 @@ async function handleGetData(ws: ExtendedWebSocket, payload: { member_id: string
   }
 }
 
-async function handleAuthentication(ws: ExtendedWebSocket, payload: { member_id: string; room_id: string }) {
+async function handleAuthentication(ws: ExtendedWebSocket, type : string , payload: { member_id: string; room_id: string}) {
   try {
     ws.member_id = payload.member_id;
     ws.room_id = payload.room_id;
@@ -127,7 +134,7 @@ async function handleAuthentication(ws: ExtendedWebSocket, payload: { member_id:
 /**
  * Handles notifications by sending messages to the target role group.
  */
-async function handleNotification(ws: ExtendedWebSocket, payload: { member_id: string; data?: { [key: string]: number } }) {
+async function handleNotification(ws: ExtendedWebSocket, type : string , payload: { member_id: string; data?: { [key: string]: number } }) {
   try {
     console.log(`🔔 Notifying from member_id: ${payload.member_id}`);
 
@@ -157,13 +164,20 @@ async function handleNotification(ws: ExtendedWebSocket, payload: { member_id: s
       where: { memberRole: targetRole },
       select: { id: true },
     });
-
+    const data = {
+      type: type,
+      payload: {
+        member_id: payload.member_id,
+        room_id: ws.room_id,
+        data: payload.data,
+      },
+    }
     const targetIds = new Set(targetMembers.map((member) => member.id));
 
     for (const client of wss.clients) {
       const clientWs = client as ExtendedWebSocket;
       if (clientWs.readyState === WebSocket.OPEN && clientWs.member_id && targetIds.has(clientWs.member_id)) {
-        clientWs.send(JSON.stringify(payload.data));
+        clientWs.send(JSON.stringify(data));
         console.log(`📤 Notification sent to ${clientWs.member_id}`);
 
         // ✅ **Add Guarded Members to Redis when notified**
