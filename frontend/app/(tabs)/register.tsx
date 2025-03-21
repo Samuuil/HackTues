@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import axios from "axios";
 //import { client } from "../../../backend/src/index"; // Adjust the path if needed
-import axios from 'axios';
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -18,11 +18,12 @@ export default function RegisterScreen() {
     setSuccessMessage("");
 
     if (!email || !username || !password) {
-      if (!email) setErrorMessage((prev) => ({ ...prev, email: "Please enter an email address." }));
+      ///if (!email) setErrorMessage((prev) => ({ ...prev, email: "Please enter an email address." }));
       if (!username) setErrorMessage((prev) => ({ ...prev, username: "Please enter a username." }));
       if (!password) setErrorMessage((prev) => ({ ...prev, password: "Please enter a password." }));
       return;
     }
+
     ///VAJEN KOMENTAR TUKA TRQBVA DA VIDQ STATUS KODA NA RESPONSE-A
     // try {
     //   const response = await client.auth.signup.post({ username, password });
@@ -39,18 +40,29 @@ export default function RegisterScreen() {
     //   console.error("Registration error:", error);
     //   setErrorMessage((prev) => ({ ...prev, username: "An error occurred. Please try again." }));
     // }
+
     const options = {
-      method: 'POST',
-      url: 'http://localhost:5000/auth/signup',
-      headers: {'Content-Type': 'application/json'},
-      data: {username: '', password: ''}
+      method: "POST",
+      url: "http://localhost:5000/auth/signup",
+      headers: { "Content-Type": "application/json" },
+      data: { username, password }, // ✅ Now sending correct data
     };
-    
+
     try {
-      const { data } = await axios.request(options);
-      console.log(data);
+      const response = await axios.request(options);
+      console.log("Response Status:", response.status); // ✅ Logs the status code
+
+      if (response.status === 201) {
+        setSuccessMessage("Registration successful! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/login"); // ✅ Redirect to login page
+        }, 2000);
+      } else {
+        setErrorMessage((prev) => ({ ...prev, username: "Registration failed. Try again." }));
+      }
     } catch (error) {
-      console.error(error);
+      console.error("Registration error:", error);
+      setErrorMessage((prev) => ({ ...prev, username: "An error occurred. Please try again." }));
     }
   };
 

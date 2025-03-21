@@ -1,107 +1,70 @@
-// import { View, Text, TouchableOpacity, Image } from "react-native";
-// import { useLocalSearchParams, useRouter } from "expo-router";
-// import { client } from "../../../../backend/src/index"
-
-
-// export default function RoomScreen() {
-//   const { id } = useLocalSearchParams(); // ✅ Get the dynamic room ID
-//   const router = useRouter();
-//   // Simulate a dynamic list of items in the room (can be fetched from an API)
-//   const items = ["Item 1", "Item 2", "Item 3", "Item 4"]; // Example items
-
-//   return (
-//     <View className="flex-1 items-center px-5 pt-5 bg-background">
-//       {/* Room Title */}
-//       <Text className="text-2xl font-bold mb-5 text-text">
-//         Room {id}
-//       </Text>
-
-//       {/* List of Items in the Room */}
-//       {items.map((item, index) => (
-//         <TouchableOpacity
-//           key={index}
-//           onPress={() => router.push(`/room/${id}/item/${index + 1}`)} // Example navigation
-//           className="w-11/12 max-w-[350px] h-20 flex-row items-center p-4 mb-3 rounded-lg border-2 border-secondary bg-white"
-//         >
-//           {/* Image on the Left */}
-//           <Image
-//             source={require("@/assets/images/i_orkestura_da_sviri.jpeg")} // Replace with your image path
-//             className="w-12 h-12 rounded-full mr-3" // Smaller image size
-//             resizeMode="cover" // Ensure the image fits properly
-//           />
-
-//           {/* Item Text */}
-//           <Text className="text-lg font-semibold text-text">
-//             {item}
-//           </Text>
-//         </TouchableOpacity>
-//       ))}
-
-//       {/* Add Item Button */}
-//       <TouchableOpacity
-//         className="w-11/12 max-w-[350px] h-20 items-center justify-center rounded-lg bg-primary mt-4"
-//       >
-//         <Text className="text-white text-4xl font-bold">+</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// }
-
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { client } from "../../../../backend/src/index"; // Assuming you still need this for API calls
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-///VAJEN KOMENTAR TUKA DA SI FILTRIRAM OT VSICHKI MEMBERI 
-///DALI SA GUARDIANI ILI GUARDED V MOQ SLUCHAJ VZIMAM SAMO
-///BABITE I GI DISPLAYVAM
+// Fetch room members
+async function getMembers(roomId: string) {
+  try {
+    const token = await AsyncStorage.getItem("token"); // Retrieve the stored token
+    const options = {
+      method: "GET",
+      url: `http://localhost:5000/rooms/members/${roomId}`,
+      headers: {
+        bearer: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    };
 
+    const { data } = await axios.request(options);
+    console.log("Fetched members:", data);
+    return data;
+  } catch (error) {
+    console.error("Error fetching members:", error);
+    return [];
+  }
+}
 
-
-
-export default function RoomScreen() {
-    const handleBoxPress = (id: number) => {
-    router.push(`/guarded/${id}`); // This will navigate to the RoomScreen with the corresponding id
-  };
-  const { id } = useLocalSearchParams(); // ✅ Get the dynamic room ID
+export default function RoomScreen() { // works with these params
+  const  id  = "feda0943-fde0-4020-b5d5-1cdc3a588340"; // Get the room ID from the URL
   const router = useRouter();
-  // Simulate a dynamic list of items in the room (can be fetched from an API)
-  const items = ["Item 1", "Item 2", "Item 3", "Item 4"]; // Example items
+  const [items, setItems] = useState([]);
 
-  
+  useEffect(() => {
+    if (id) {
+      getMembers(id).then((data) => setItems(data));
+    }
+  }, [id]);
+
+  const handleBoxPress = (memberId: string) => {
+    router.push(`/guarded/${memberId}`); // Navigate to the guarded member page
+  };
 
   return (
     <View className="flex-1 items-center px-5 pt-5 bg-background">
-      {/* Room Title */}
-      <Text className="text-2xl font-bold mb-5 text-text">
-        Room {id}
-      </Text>
+      <Text className="text-2xl font-bold mb-5 text-text">Room {id}</Text>
 
-      {/* List of Items in the Room */}
+      {/* List of Room Members */}
       {items.map((item, index) => (
         <TouchableOpacity
           key={index}
-          onPress={() => handleBoxPress(index)} // Navigate to the guarded page
+          onPress={() => handleBoxPress(item.id)} // Navigate using member ID
           className="w-11/12 max-w-[350px] h-20 flex-row items-center p-4 mb-3 rounded-lg border-2 border-secondary bg-white"
         >
-          {/* Image on the Left */}
+          {/* Member Image */}
           <Image
-            source={require("@/assets/images/i_orkestura_da_sviri.jpeg")} // Replace with your image path
-            className="w-12 h-12 rounded-full mr-3" // Smaller image size
-            resizeMode="cover" // Ensure the image fits properly
+            source={require("@/assets/images/i_orkestura_da_sviri.jpeg")}
+            className="w-12 h-12 rounded-full mr-3"
+            resizeMode="cover"
           />
-
-          {/* Item Text */}
-          <Text className="text-lg font-semibold text-text">
-            {item}
-          </Text>
+          <Text className="text-lg font-semibold text-text">{item.name}</Text>
         </TouchableOpacity>
       ))}
 
       {/* Add Item Button */}
-      <TouchableOpacity
-        className="w-11/12 max-w-[350px] h-20 items-center justify-center rounded-lg bg-primary mt-4"
-      >
+      <TouchableOpacity className="w-11/12 max-w-[350px] h-20 items-center justify-center rounded-lg bg-primary mt-4">
         <Text className="text-white text-4xl font-bold">+</Text>
       </TouchableOpacity>
     </View>

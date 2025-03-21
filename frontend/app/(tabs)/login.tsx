@@ -3,8 +3,8 @@ import { View, TextInput, Pressable, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { client } from "../../../backend/src/index";
 import axios from 'axios';
+// import { client } from "@/backend/src";
 
 
 const router = useRouter();
@@ -14,7 +14,7 @@ async function login(username: string, password: string) {
   //da se izpolzva za vzimane na rooms i babi
   // try {
   //   const response = await client.auth.login.post({ username, password });
-
+  //   console.log(response);
   //   if (response.status === 200) {
   //     const token = response.data; // Assuming API returns { token: "..." }
   //     if (token) await AsyncStorage.setItem("token", token); // Save the token to AsyncStorage
@@ -29,17 +29,25 @@ async function login(username: string, password: string) {
   const options = {
     method: 'POST',
     url: 'http://localhost:5000/auth/login',
-    headers: {'Content-Type': 'application/json'},
-    data: {username: '', password: ''}
+    headers: { 'Content-Type': 'application/json' },
+    data: { username, password }
   };
-  
+
   try {
     const { data } = await axios.request(options);
-    console.log(data);
+    
+    if (data.token) {
+      await AsyncStorage.setItem("token", data.token);
+      console.log("Logged in successfully, token saved:", data.token);
+      router.push("/home"); // Redirect after successful login
+    } else {
+      console.log("Login failed: No token received");
+    }
   } catch (error) {
-    console.error(error);
+    console.error("Login error:", error);
   }
 }
+
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
