@@ -50,7 +50,7 @@ async def send_data():
                 "payload" : {
                     "time" : time.time() * 1000,
                     "data" : {
-                        "accel":{
+                        "acce":{
                             "x": round(accel_x, 2),
                             "y": round(accel_y, 2),
                             "z": round(accel_z, 2)
