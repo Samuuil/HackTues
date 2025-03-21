@@ -15,7 +15,7 @@ const app = new Elysia().use(cors())
     .use(authRouter)
     .use(roomRouter)
     .use(agentsRouter)
-    .listen(port, () => {
+    .listen({port: port, hostname: "0.0.0.0"}, () => {
         console.log("listening on port" + port)
     })
 
