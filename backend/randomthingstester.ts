@@ -1,12 +1,6 @@
 import { sdk } from "./src";
 
-
-// const b = sdk.
-const a = sdk.rooms.notify.subscribe()
-
-a.send("")
+import { RoomsService } from "./src/services/implementations/Room";
 
 
-// a.subscribe((m) => {
-//     console.log(m)
-// })
+console.log(await new RoomsService().getMemberByUsernameAndRoom("ff","huhu76"))

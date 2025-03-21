@@ -1,4 +1,4 @@
-import { PrismaClient, MemberRole, type User, type Room  } from "@prisma/client";
+import { PrismaClient, MemberRole, type User, type Room, type Member  } from "@prisma/client";
 import type { IRoomsService } from "../interfaces/Room";
 import type { IdOrUsernameQuery } from "../../utils/types/idOrUsernnameQuery";
 import { Optional } from "../../utils/Optional";
@@ -10,6 +10,22 @@ export class RoomsService implements IRoomsService {
   private client = new PrismaClient();
 
   constructor() {}
+
+  async getMemberByUsernameAndRoom(username: string, roomName: string): Promise<Member | null> {
+    const room = await this.client.room.findFirst({
+        where: { name: roomName },
+        include: {
+            members: {
+                where: { user: { name : username } },
+                include: { user: true }
+            }
+        }
+    });
+
+    if (!room || room.members.length === 0) return null;
+
+    return room.members[0]
+    }
 
   async getUserRooms(userd: string): Promise<Room[]> {
     return (await this.client.user.findUnique({

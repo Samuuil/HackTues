@@ -66,6 +66,24 @@ export const roomRouter = new Elysia({ prefix: "/rooms" })
 //         return;
 //     }
 // })
+
+.post(
+  "/getMemberByUsernameAndRoomName",
+  async ({ body, store }) => {
+    const member = await store.services.roomsService.getMemberByUsernameAndRoom(body.username, body.roomName);
+    if (!member) {
+      return { error: "Member not found" };
+    }
+    return member;
+  },
+  {
+    body: t.Object({
+      username: t.String(),
+      roomName: t.String()
+    })
+  }
+)
+
   .post(
     "/",
     async ({ body, store  }) => {
@@ -91,6 +109,7 @@ export const roomRouter = new Elysia({ prefix: "/rooms" })
     }, {
       params: t.Object({ roomId: t.String() })
     } 
+       
   )
   .get(
     "/:userId",
