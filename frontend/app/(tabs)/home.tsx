@@ -1,100 +1,88 @@
-// import React from "react";
-// import { View, TouchableOpacity, Text } from "react-native";
-// import { useRouter } from "expo-router";
-// import { colors } from "@/theme/colors"; // Import colors from your theme
-
-// export default function HomeScreen() {
-//   const router = useRouter();
-
-//   const handleBoxPress = (id: number) => {
-//     router.push(`/room/${id}`); // This will navigate to the RoomScreen with the corresponding id
-//   };
-
-  
-
-//   return (
-//     <View className="flex-1 items-center bg-lightBackground p-5">
-//       <Text className="text-2xl font-bold text-gray-700 mt-5 mb-5">Home Page</Text>
-
-//       {[1, 2, 3].map((num) => (
-//         <TouchableOpacity
-//           key={num}
-//           className="w-full h-24 bg-cardBg rounded-lg mb-5 flex-row items-center p-3 border border-gray-300"
-//           onPress={() => handleBoxPress(num)} // Navigate to the corresponding room when the box is pressed
-//         >
-//           <Text className="text-lg text-gray-700 flex-1">
-//             Placeholder Text for Box {num}
-//           </Text>
-//         </TouchableOpacity>
-//       ))}
-
-//       <TouchableOpacity
-//         className="w-full h-24 bg-highlight rounded-lg items-center justify-center bg-primary"
-//       >
-//         <Text className="text-white text-4xl font-bold">+</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// }
-
-
 import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, ActivityIndicator, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { colors } from "@/theme/colors"; // Import colors from your theme
-
-// Mock function to simulate fetching data from the backend
-const fetchRooms = () => {
-  return new Promise<{ id: number; name: string }[]>((resolve) => {
-    setTimeout(() => {
-      resolve([
-        { id: 1, name: "Room 1" },
-        { id: 2, name: "Room 2" },
-        { id: 3, name: "Room 3" },
-        { id: 4, name: "Room 4" },
-        { id: 5, name: "Room 5" },
-      ]);
-    }, 1000); // Simulate network delay
-  });
-};
-
-// Mock function to simulate creating a new room
-const createRoom = (rooms: { id: number; name: string }[]) => {
-  const newId = rooms.length + 1; // Simple new ID logic, can be replaced with backend logic
-  const newRoom = { id: newId, name: `Room ${newId}` }; // New room name logic
-  return newRoom;
-};
+import axios from "axios";
 
 export default function HomeScreen() {
   const [rooms, setRooms] = useState<{ id: number; name: string }[]>([]);
-  const [loading, setLoading] = useState(true); // Loading state for simulating data fetch
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+
+  // Hardcoded userId and token
+  const userId = "fa4f2d82-10c5-4d9a-b4b7-a88d0ad99dd9";
+  const token = "huhu";
 
   // Fetch rooms when the component mounts
   useEffect(() => {
-    const loadRooms = async () => {
+    const fetchRooms = async () => {
+      const options = {
+        method: "GET",
+        url: `http://localhost:5000/rooms/${userId}`,
+        headers: { bearer: `Bearer ${token}` }, // Correct Bearer token format
+      };
+
       try {
-        const data = await fetchRooms(); // Simulate fetching data
-        setRooms(data); // Set the rooms state with the fetched data
+        const { data } = await axios.request(options);
+        console.log("Fetched rooms:", data);
+
+        // Ensure room has a name or set default name if needed
+        const formattedRooms = data.map((room: any) => ({
+          id: room.id,
+          name: room.roomPassword || "Unnamed Room", // Using roomPassword as room name for now
+        }));
+
+        setRooms(formattedRooms);
       } catch (error) {
         console.error("Error fetching rooms:", error);
       } finally {
-        setLoading(false); // Stop loading after fetching data
+        setLoading(false);
       }
     };
 
-    loadRooms(); // Call the function to load the rooms
+    fetchRooms();
   }, []);
 
   // Handle box press (navigation to the room screen)
   const handleBoxPress = (id: number) => {
-    router.push(`/room/${id}`); // This will navigate to the RoomScreen with the corresponding id
+    router.push(`/room/${id}`);
+  };
+
+  // Generate room name based on current timestamp (formatted as YYYYMMDDHHMMSS)
+  const generateRoomName = () => {
+    const now = new Date();
+    return now.toISOString().replace(/[-T:.Z]/g, ""); // Converts to YYYYMMDDHHMMSS format
   };
 
   // Handle creating a new room
-  const handleCreateRoom = () => {
-    const newRoom = createRoom(rooms); // Create a new room
-    setRooms((prevRooms) => [...prevRooms, newRoom]); // Add the new room to the rooms array
+  const handleCreateRoom = async () => {
+    const roomName = generateRoomName();
+
+    const options = {
+      method: "POST",
+      url: "http://localhost:5000/rooms/",
+      headers: {
+        bearer: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      data: {
+        roomPassword: roomName, // Using generated timestamp string as room password
+        userId: userId,
+      },
+    };
+
+    try {
+      const { data } = await axios.request(options);
+      console.log("New room created:", data);
+
+      // Assuming API returns a room object with id and roomPassword (use as room name)
+      setRooms((prevRooms) => [
+        ...prevRooms,
+        { id: data.id, name: data.roomPassword || "Unnamed Room" }, // Add the new room to the list
+      ]);
+    } catch (error) {
+      console.error("Error creating room:", error);
+    }
   };
 
   // Render loading state while fetching data
@@ -118,21 +106,20 @@ export default function HomeScreen() {
           <TouchableOpacity
             key={room.id}
             className="w-full h-24 bg-cardBg rounded-lg mb-5 flex-row items-center p-3 border border-gray-300"
-            onPress={() => handleBoxPress(room.id)} // Navigate to the corresponding room when the box is pressed
+            onPress={() => handleBoxPress(room.id)}
           >
             <Text className="text-lg text-gray-700 flex-1">{room.name}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
-      {/* Add Item Button to create a new room */}
+      {/* Add Room Button */}
       <TouchableOpacity
         className="w-full h-24 bg-highlight rounded-lg items-center justify-center bg-primary"
-        onPress={handleCreateRoom} // Call the function to create a new room
+        onPress={handleCreateRoom} // Call API to create a new room
       >
         <Text className="text-white text-4xl font-bold">+</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
