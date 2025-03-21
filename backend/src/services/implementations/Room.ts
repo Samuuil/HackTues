@@ -11,6 +11,17 @@ export class RoomsService implements IRoomsService {
 
   constructor() {}
 
+  async getUserRooms(userd: string): Promise<Room[]> {
+    return (await this.client.user.findUnique({
+      where: {
+          id: userd
+      },
+      include: {
+        rooms: true
+      }
+      }))?.rooms
+  }
+
   async createRoom(name: string, creatorId: string): Promise<string> {
     console.log(name, creatorId)
     const creator = await this.client.user.findUnique({

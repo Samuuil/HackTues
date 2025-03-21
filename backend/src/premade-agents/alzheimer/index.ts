@@ -1,5 +1,6 @@
+import { context } from "../../context";
 import { WebSocketClient } from "../../websocket-server/sdk-ts";
-import type { wsObject } from "../../websocket-server/server";
+import { wsObject } from "../../websocket-server/server";
 
 
 
@@ -28,9 +29,17 @@ function checkIfIsOutBounds(coords: Point): boolean {
     return !isInsideCircle(circle, coords); // If not inside, it's out of bounds
 }
 
+
+
+
 const wClient = new WebSocketClient<typeof wsObject>("ws://localhost:8081", {
     newData: (v) => {
-        console.log(v)
-        checkIfIsOutBounds(v.payload.gps)
+        if (checkIfIsOutBounds(v.payload.gps)) {
+            // send notification if it is to all guardians
+        }
     }
-}).start()
+})
+
+
+
+wClient.start()

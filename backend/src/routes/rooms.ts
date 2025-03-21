@@ -93,6 +93,27 @@ export const roomRouter = new Elysia({ prefix: "/rooms" })
     } 
        
   )
+  .get(
+    "/:userId",
+    async({ params, store }) => {
+      return await store.services.roomsService.getUserRooms(params.userId)
+    }, {
+      params: t.Object({
+        userId: t.String()
+      })
+    }
+  )
+  .get(
+    "/members/:roomId",
+    async ({ params, store }) => {
+        return await store.services.roomsService.getMembers(params.roomId)
+    },
+    {
+      params: t.Object({
+        roomId: t.String()
+      })
+    }
+  )
   .post(
     "/members",
     async ({ store, body }) => {
