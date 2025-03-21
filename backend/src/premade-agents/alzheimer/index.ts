@@ -32,14 +32,5 @@ function checkIfIsOutBounds(coords: Point): boolean {
 
 
 
-const wClient = new WebSocketClient<typeof wsObject>("ws://localhost:8081", {
-    newData: (v) => {
-        if (checkIfIsOutBounds(v.payload.gps)) {
-            // send notification if it is to all guardians
-        }
-    }
-})
 
 
-
-wClient.start()
