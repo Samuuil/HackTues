@@ -1,4 +1,4 @@
-import type { MemberRole, Room } from "@prisma/client";
+import type { Member, MemberRole, Room } from "@prisma/client";
 import type { User } from "../../models/User";
 import type { IdOrUsernameQuery } from "../../utils/types/idOrUsernnameQuery";
 
@@ -7,4 +7,5 @@ export interface IRoomsService {
   addUserToRoom(query: IdOrUsernameQuery<string>, role: MemberRole, roomId: string): Promise<void>;
   getMembers(roomId: string): Promise<User[]>; // it is not optional since a room has to have atleast one user to exit (the creator )
   getUserRooms(userd: string): Promise<Room[]>
+  getMemberByUsernameAndRoom(username: string, roomName: string): Promise<Member | null>;
 }
