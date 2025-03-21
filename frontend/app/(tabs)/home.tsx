@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { colors } from "@/theme/colors"; // Import colors from your theme
 import axios from "axios";
 import { getToken, getUserId } from "./storageAuth"; // Import getToken and getUserId functions
+import { getURL } from "../../../frontend/getURL";
 
 export default function HomeScreen() {
   const [rooms, setRooms] = useState<{ id: number; name: string }[]>([]);
@@ -11,6 +12,7 @@ export default function HomeScreen() {
   const [userId, setUserId] = useState<string | null>(null); // Store userId
   const [token, setToken] = useState<string | null>(null); // Store token
   const router = useRouter();
+  const url = getURL();
 
   useEffect(() => {
     const fetchAuthData = async () => {
@@ -35,12 +37,12 @@ export default function HomeScreen() {
     const fetchRooms = async () => {
       if (!userId || !token) return; // Ensure credentials are available
       try {
-        const { data } = await axios.get(`http://localhost:5000/rooms/${userId}`, {
+        const { data } = await axios.get(`${url}/rooms/${userId}`, {
           headers: { bearer: `Bearer ${token}` },
         });
-
+  
         console.log("Fetched rooms:", data);
-
+  
         setRooms(
           data.map((room: any) => ({
             id: room.id,
@@ -53,9 +55,10 @@ export default function HomeScreen() {
         setLoading(false);
       }
     };
-
+  
     fetchRooms();
   }, [userId, token]); // Runs when userId and token are updated
+  
 
   const handleBoxPress = (id: number) => {
     router.push(`/room/${id}`);
@@ -70,12 +73,12 @@ export default function HomeScreen() {
       console.error("No user ID or token available");
       return;
     }
-
+  
     const roomName = generateRoomName();
-
+  
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/rooms/",
+        `${url}/rooms/`,
         {
           roomPassword: roomName,
           userId: userId,
@@ -87,16 +90,16 @@ export default function HomeScreen() {
           },
         }
       );
-
+  
       console.log("New room created:", data);
       console.log("Fetched rooms data:", JSON.stringify(data, null, 2));
-
-
+  
       setRooms((prevRooms) => [...prevRooms, { id: data.id, name: data.name || "Unnamed Room" }]);
     } catch (error) {
       console.error("Error creating room:", error);
     }
   };
+  
 
   if (loading) {
     return (

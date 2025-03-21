@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
+import * as Notifications from 'expo-notifications';
 
 export default function App() {
   const [connected, setConnected] = useState(false);
@@ -8,7 +9,7 @@ export default function App() {
       long: number;
       lat: number;
     };
-    bpm: number; // Now bpm is a single number
+    bpm: number;
   }>({
     gps: {
       long: 0,
@@ -67,6 +68,18 @@ export default function App() {
       if (data.newData) {
         // Update the state with the new data
         setMessage(data.newData);
+
+        // Trigger notification if bpm exceeds 65
+        if (data.newData.bpm > 65) {
+          Notifications.scheduleNotificationAsync({
+            content: {
+              title: 'Pulse Alert!',
+              body: `BPM is high: ${data.newData.bpm}. GPS: Long - ${data.newData.gps.long}, Lat - ${data.newData.gps.lat}`,
+              sound: true,
+            },
+            trigger: null, // Show the notification immediately
+          });
+        }
       } else {
         console.log('Unknown message type:', data);
       }

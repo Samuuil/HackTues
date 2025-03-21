@@ -3,6 +3,7 @@ import { View, TextInput, Pressable, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
+import { getURL } from "../../../frontend/getURL";
 //import { client } from "../../../backend/src/index"; // Adjust the path if needed
 
 export default function RegisterScreen() {
@@ -40,10 +41,11 @@ export default function RegisterScreen() {
     //   console.error("Registration error:", error);
     //   setErrorMessage((prev) => ({ ...prev, username: "An error occurred. Please try again." }));
     // }
+    const url = getURL() + "/auth/signup";
 
     const options = {
       method: "POST",
-      url: "http://localhost:5000/auth/signup",
+      url: url,
       headers: { "Content-Type": "application/json" },
       data: { username, password }, // ✅ Now sending correct data
     };
@@ -71,13 +73,13 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View className="flex-1 items-center px-5 pt-24 bg-background">
+    <View className="flex-1 items-center px-5 pt-24 bg-[#faede4]">
       <Text className="text-2xl font-bold mb-5 text-text">Register</Text>
 
       {/* Email Input */}
       <View className="w-full max-w-xs mb-4">
         {errorMessage.email ? <Text className="text-xs mb-1 ml-2 text-error">{errorMessage.email}</Text> : null}
-        <View className="flex-row items-center h-12 rounded-lg px-3 bg-inputBg">
+        <View className="flex-row items-center h-12 rounded-lg px-3 bg-[#fac7a2]">
           <MaterialIcons name="email" size={24} color="currentColor" className="mr-3 text-text" />
           <TextInput
             className="flex-1 text-base text-text"
@@ -94,7 +96,7 @@ export default function RegisterScreen() {
       {/* Username Input */}
       <View className="w-full max-w-xs mb-4">
         {errorMessage.username ? <Text className="text-xs mb-1 ml-2 text-error">{errorMessage.username}</Text> : null}
-        <View className="flex-row items-center h-12 rounded-lg px-3 bg-inputBg">
+        <View className="flex-row items-center h-12 rounded-lg px-3 bg-[#fac7a2]">
           <MaterialIcons name="person" size={24} color="currentColor" className="mr-3 text-text" />
           <TextInput
             className="flex-1 text-base text-text"
@@ -110,7 +112,7 @@ export default function RegisterScreen() {
       {/* Password Input */}
       <View className="w-full max-w-xs mb-4">
         {errorMessage.password ? <Text className="text-xs mb-1 ml-2 text-error">{errorMessage.password}</Text> : null}
-        <View className="flex-row items-center h-12 rounded-lg px-3 bg-inputBg">
+        <View className="flex-row items-center h-12 rounded-lg px-3 bg-[#fac7a2]">
           <MaterialIcons name="lock" size={24} color="currentColor" className="mr-3 text-text" />
           <TextInput
             className="flex-1 text-base text-text"
