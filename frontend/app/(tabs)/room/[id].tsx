@@ -3,13 +3,15 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getURL } from "../../../../frontend/getURL";
 
 // Fetch room members dynamically using the room ID
 async function getMembers(roomId: string, token: string) {
   try {
+    const url = getURL(); // Get the base URL dynamically
     const options = {
       method: "GET",
-      url: `http://localhost:5000/rooms/members/${roomId}`,
+      url: `${url}/rooms/members/${roomId}`, // Use getURL() instead of localhost
       headers: {
         bearer: `Bearer ${token}`,
         "Content-Type": "application/json",
@@ -24,6 +26,7 @@ async function getMembers(roomId: string, token: string) {
     return [];
   }
 }
+
 
 export default function RoomScreen() {
   const { id } = useLocalSearchParams(); // Get the room ID from the URL
@@ -49,6 +52,7 @@ export default function RoomScreen() {
     // Ensure `id` is a string before calling the API
     if (id && token) {
       const roomId = Array.isArray(id) ? id[0] : id; // Handle the case when `id` is an array
+      AsyncStorage.setItem
       getMembers(roomId, token).then((data) => setItems(data));
     }
   }, [id, token]); // Re-fetch members whenever the room ID or token changes
