@@ -139,6 +139,18 @@ export const roomRouter = new Elysia({ prefix: "/rooms" })
     }
   )
   .post(
+    "/getMember",
+    async ({ body, store }) => { 
+      return await store.services.roomsService.getMemberByUsernameAndRoom(body.username, body.roomName ) 
+    },
+    {
+      body: t.Object({
+        username: t.String(),
+        roomName: t.String()
+      })
+    }
+  )
+  .post(
     // might as well turn it into webscoket route
     "/notify",
     async ({ body, store }) => {
