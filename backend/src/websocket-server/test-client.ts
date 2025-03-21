@@ -15,7 +15,7 @@ ws.on("open", () => {
         ws.send(JSON.stringify({
             type: "authenticate",
             payload: {
-                member_id: "d2df47d2-9691-41bb-a622-031e289c986d"
+                member_id: "a6f57b1d-641a-4a05-a33e-7ae775f27f63"
             }
         }));
     }, 1000);

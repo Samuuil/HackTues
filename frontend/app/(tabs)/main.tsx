@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { colors } from "@/theme/colors";
+import { WebSocketClient } from "../NotificationHandler";
 
 export default function MainScreen() {
   return (
@@ -9,6 +10,10 @@ export default function MainScreen() {
     </View>
   );
 }
+
+ const ws = new WebSocketClient("597ed009-f511-4eeb-865a-7128ac6952b5", (v) => {
+  console.log(v);
+ });
 
 const styles = StyleSheet.create({
   container: {
