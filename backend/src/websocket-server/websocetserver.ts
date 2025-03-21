@@ -8,7 +8,7 @@ interface ExtendedWebSocket extends WebSocket {
 }
 
 const prisma = new PrismaClient();
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ host: "0.0.0.0",port: 8080 });
 
 console.log("✅ WebSocket server running on ws://localhost:8080");
 
