@@ -91,7 +91,6 @@ export const roomRouter = new Elysia({ prefix: "/rooms" })
     }, {
       params: t.Object({ roomId: t.String() })
     } 
-       
   )
   .get(
     "/:userId",
