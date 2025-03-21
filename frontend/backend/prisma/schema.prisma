@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MemberRole {
+  Guardian
+  Guarded
+}
+
+model Data {
+  id        String   @id @default(uuid())
+  data      Json
+  timestamp DateTime
+
+  Member Member[]
+}
+
+model Member {
+  id     String @id @default(uuid())
+  name   String
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  dataId String?
+  data   Data?   @relation(fields: [dataId], references: [id])
+
+  memberRole MemberRole @default(Guarded)
+  roomId     String
+  room       Room       @relation(fields: [roomId], references: [id])
+}
+
+model Room {
+  id   String @id @default(uuid())
+  name String @unique
+
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id])
+
+  members Member[]
+}
+
+model User {
+  id      String  @id @default(uuid())
+  name    String  @unique
+
+  agents  Agent[]
+  rooms   Room[]
+  members Member[]
+}
+
+model Agent {
+  id     String @id @default(uuid())
+  name   String
+  value  String
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+}
+ 

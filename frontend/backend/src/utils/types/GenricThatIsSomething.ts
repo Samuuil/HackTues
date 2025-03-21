@@ -1,0 +1,1 @@
+export type Something<T> = T extends null ? never : T

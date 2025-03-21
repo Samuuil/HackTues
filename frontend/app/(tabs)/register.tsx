@@ -2,24 +2,67 @@ import React, { useState } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import axios from "axios";
+//import { client } from "../../../backend/src/index"; // Adjust the path if needed
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState({ email: "", username: "", password: "" });
+  const [successMessage, setSuccessMessage] = useState(""); // To show success feedback
   const router = useRouter();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     setErrorMessage({ email: "", username: "", password: "" });
+    setSuccessMessage("");
 
     if (!email || !username || !password) {
-      if (!email) setErrorMessage((prev) => ({ ...prev, email: "Please enter an email address." }));
+      ///if (!email) setErrorMessage((prev) => ({ ...prev, email: "Please enter an email address." }));
       if (!username) setErrorMessage((prev) => ({ ...prev, username: "Please enter a username." }));
       if (!password) setErrorMessage((prev) => ({ ...prev, password: "Please enter a password." }));
-    } else {
-      console.log("Registering with:", email, username, password);
-      router.push("/login");
+      return;
+    }
+
+    ///VAJEN KOMENTAR TUKA TRQBVA DA VIDQ STATUS KODA NA RESPONSE-A
+    // try {
+    //   const response = await client.auth.signup.post({ username, password });
+
+    //   if (response.status === 201) {
+    //     setSuccessMessage("Registration successful! Redirecting to login...");
+    //     setTimeout(() => {
+    //       router.push("/login");
+    //     }, 2000);
+    //   } else {
+    //     setErrorMessage((prev) => ({ ...prev, username: "Registration failed. Try again." }));
+    //   }
+    // } catch (error) {
+    //   console.error("Registration error:", error);
+    //   setErrorMessage((prev) => ({ ...prev, username: "An error occurred. Please try again." }));
+    // }
+
+    const options = {
+      method: "POST",
+      url: "http://localhost:5000/auth/signup",
+      headers: { "Content-Type": "application/json" },
+      data: { username, password }, // ✅ Now sending correct data
+    };
+
+    try {
+      const response = await axios.request(options);
+      console.log("Response Status:", response.status); // ✅ Logs the status code
+
+      if (response.status === 201) {
+        setSuccessMessage("Registration successful! Redirecting to login...");
+        setTimeout(() => {
+          router.push("/login"); // ✅ Redirect to login page
+        }, 2000);
+      } else {
+        setErrorMessage((prev) => ({ ...prev, username: "Registration failed. Try again." }));
+      }
+    } catch (error) {
+      console.error("Registration error:", error);
+      setErrorMessage((prev) => ({ ...prev, username: "An error occurred. Please try again." }));
     }
   };
 
@@ -29,9 +72,7 @@ export default function RegisterScreen() {
 
   return (
     <View className="flex-1 items-center px-5 pt-24 bg-background">
-      <Text className="text-2xl font-bold mb-5 text-text">
-        Register
-      </Text>
+      <Text className="text-2xl font-bold mb-5 text-text">Register</Text>
 
       {/* Email Input */}
       <View className="w-full max-w-xs mb-4">
@@ -45,6 +86,7 @@ export default function RegisterScreen() {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            autoCapitalize="none"
           />
         </View>
       </View>
@@ -80,6 +122,9 @@ export default function RegisterScreen() {
           />
         </View>
       </View>
+
+      {/* Success Message */}
+      {successMessage ? <Text className="text-green-500 mb-4">{successMessage}</Text> : null}
 
       {/* Register Button */}
       <Pressable className="w-full max-w-xs py-3 rounded-lg items-center mt-3 bg-primary" onPress={handleRegister}>
