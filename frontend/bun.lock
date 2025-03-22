@@ -5,6 +5,7 @@
       "name": "frontend",
       "dependencies": {
         "@expo-google-fonts/dancing-script": "^0.2.3",
+        "@expo-google-fonts/poppins": "^0.2.3",
         "@expo/vector-icons": "^14.0.2",
         "@react-native-async-storage/async-storage": "^2.1.2",
         "@react-navigation/bottom-tabs": "^7.2.0",
@@ -319,6 +320,8 @@
     "@egjs/hammerjs": ["@egjs/hammerjs@2.0.17", "", { "dependencies": { "@types/hammerjs": "^2.0.36" } }, "sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A=="],
 
     "@expo-google-fonts/dancing-script": ["@expo-google-fonts/dancing-script@0.2.3", "", {}, "sha512-W92/z1/T7jD0GM7/uSr4QFUW1n3QEHfvM7kBIQzJtqYnLC9egMncGdcWpb1dhKAsIzwH/LvLKB9i/9Uoc28NEg=="],
+
+    "@expo-google-fonts/poppins": ["@expo-google-fonts/poppins@0.2.3", "", {}, "sha512-PXkur1ZY/puy1PwVFYPJx8qiI3dtBzC2ig1bo53swCt7/sI7krCGYRO6hLBNp15M0kcNh2J4cCR9ZQyFxsving=="],
 
     "@expo/bunyan": ["@expo/bunyan@4.0.1", "", { "dependencies": { "uuid": "^8.0.0" } }, "sha512-+Lla7nYSiHZirgK+U/uYzsLv/X+HaJienbD5AKX1UQZHYfWaP+9uuQluRB4GrEVWF0GZ7vEVp/jzaOT9k/SQlg=="],
 

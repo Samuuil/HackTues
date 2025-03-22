@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, Text, TextInput } from "react-native";
 import { useRouter } from "expo-router";
-// import { client } from "../../../backend/src";
-import {treaty} from "@elysiajs/eden"
+// // import { client } from "../../../backend/src";
+// import {treaty} from "@elysiajs/eden"
 
-export const client
- = treaty
-<App
->('localhost:5000')
+// export const client
+//  = treaty
+// <App
+// >('localhost:5000')
 
 
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator, ScrollView } from "react-native";
 import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getMemberId } from "@/utils/getMemberId";
@@ -8,7 +8,18 @@ import { registerForPushNotificationsAsync } from "@/utils/notifications";
 export default function App() {
   const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
   const [connected, setConnected] = useState(false);
-  const [message, setMessage] = useState<{ gps: { long: number; lat: number }; bpm: number }>({ gps: { long: 0, lat: 0 }, bpm: 0 });
+  const [message, setMessage] = useState({
+    gps: { lon: 0, lat: 0 },
+    bpm: 0,
+    acce: { x: 0, y: 0, z: 0 },
+    gyro: { x: 0, y: 0, z: 0 },
+  });
+
+  const [initialCoords, setInitialCoords] = useState<{ x: number; z: number } | null>(null);
+  const [outOfBounds, setOutOfBounds] = useState(false);
+
+  // Define the square's boundaries (in meters or a chosen unit)
+  const SQUARE_SIZE = 20000; // 20 km by 20 km square (you can adjust this)
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => {
@@ -46,19 +57,33 @@ export default function App() {
         if (data.payload.data) {
           setMessage(data.payload.data);
 
-          // Send a local notification if BPM is too high
-          if (data.payload.data.bpm > 25) {
-            await Notifications.scheduleNotificationAsync({
-              content: {
-                title: "Pulse Alert!",
-                body: `BPM is high: ${data.payload.data.bpm}. GPS: Long - ${data.payload.data.gps.long}, Lat - ${data.payload.data.gps.lat}`,
-                sound: true,
-              },
-              trigger: null,
-            });
+          const newGpsCoords = data.payload.data.gps;
+
+          if (!initialCoords) {
+            // Store the first received x and z coordinates
+            setInitialCoords({ x: newGpsCoords.lat, z: newGpsCoords.lon });
+          } else {
+            // Check if the current x, z are within the square's boundaries
+            const deltaX = Math.abs(newGpsCoords.lat - initialCoords.x);
+            const deltaZ = Math.abs(newGpsCoords.lon - initialCoords.z);
+
+            // If either delta is greater than the square size, it's out of bounds
+            if (deltaX > SQUARE_SIZE || deltaZ > SQUARE_SIZE) {
+              if (!outOfBounds) {
+                setOutOfBounds(true);
+                await Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Out of Bounds!",
+                    body: "You are out of the designated area.",
+                    sound: true,
+                  },
+                  trigger: null,
+                });
+              }
+            } else {
+              setOutOfBounds(false); // Reset if within bounds
+            }
           }
-        } else {
-          console.warn("Received unknown message:", data);
         }
       } catch (e) {
         console.error("Error parsing WebSocket message:", e);
@@ -73,21 +98,45 @@ export default function App() {
     return () => {
       socket.close();
     };
-  }, []);
+  }, [outOfBounds, initialCoords]);
 
   return (
-    <View className="flex-1 justify-center items-center p-5">
-      {connected ? (
-        <Text className="text-2xl mb-4 text-green-600">Connected</Text>
-      ) : (
-        <>
-          <ActivityIndicator size="large" color="red" />
-          <Text className="text-2xl mb-4 text-red-600">Disconnected</Text>
-        </>
-      )}
-      <Text className="text-lg text-center mb-5">
-        {`GPS: Long - ${message.gps.long}, Lat - ${message.gps.lat}\nBPM: ${message.bpm}`}
-      </Text>
-    </View>
+    <ScrollView className="flex-1 p-5 bg-[#faede4]">
+      <View className="items-center mb-5">
+        {connected ? (
+          <Text className="text-2xl font-bold text-green-600">Connected</Text>
+        ) : (
+          <>
+            <ActivityIndicator size="large" color="red" />
+            <Text className="text-2xl font-bold text-red-600">Disconnected</Text>
+          </>
+        )}
+      </View>
+
+      <View className="p-4 bg-[#fac7a2] rounded-lg mb-4">
+        <Text className="text-lg font-bold text-text">Heart Rate</Text>
+        <Text className="text-2xl font-bold text-red-600">{message.bpm} BPM</Text>
+      </View>
+
+      <View className="p-4 bg-[#fac7a2] rounded-lg mb-4">
+        <Text className="text-lg font-bold text-text">GPS Coordinates</Text>
+        <Text className="text-base">Longitude: {message.gps.lon}</Text>
+        <Text className="text-base">Latitude: {message.gps.lat}</Text>
+      </View>
+
+      <View className="p-4 bg-[#fac7a2] rounded-lg mb-4">
+        <Text className="text-lg font-bold text-text">Accelerometer Data</Text>
+        <Text className="text-base">X: {message.acce.x.toFixed(2)}</Text>
+        <Text className="text-base">Y: {message.acce.y.toFixed(2)}</Text>
+        <Text className="text-base">Z: {message.acce.z.toFixed(2)}</Text>
+      </View>
+
+      <View className="p-4 bg-[#fac7a2] rounded-lg mb-4">
+        <Text className="text-lg font-bold text-text">Gyroscope Data</Text>
+        <Text className="text-base">X: {message.gyro.x.toFixed(2)}</Text>
+        <Text className="text-base">Y: {message.gyro.y.toFixed(2)}</Text>
+        <Text className="text-base">Z: {message.gyro.z.toFixed(2)}</Text>
+      </View>
+    </ScrollView>
   );
 }
