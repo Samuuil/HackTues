@@ -4,7 +4,7 @@ import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
 import { getURL } from "../../../frontend/getURL";
-//import { client } from "../../../backend/src/index"; // Adjust the path if needed
+//import { client } from "../../../backend/src/index"; 
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState("");
@@ -19,13 +19,11 @@ export default function RegisterScreen() {
     setSuccessMessage("");
 
     if (!email || !username || !password) {
-      ///if (!email) setErrorMessage((prev) => ({ ...prev, email: "Please enter an email address." }));
       if (!username) setErrorMessage((prev) => ({ ...prev, username: "Please enter a username." }));
       if (!password) setErrorMessage((prev) => ({ ...prev, password: "Please enter a password." }));
       return;
     }
 
-    ///VAJEN KOMENTAR TUKA TRQBVA DA VIDQ STATUS KODA NA RESPONSE-A
     // try {
     //   const response = await client.auth.signup.post({ username, password });
 
@@ -47,17 +45,17 @@ export default function RegisterScreen() {
       method: "POST",
       url: url,
       headers: { "Content-Type": "application/json" },
-      data: { username, password }, // ✅ Now sending correct data
+      data: { username, password }, 
     };
 
     try {
       const response = await axios.request(options);
-      console.log("Response Status:", response.status); // ✅ Logs the status code
+      console.log("Response Status:", response.status); 
 
       if (response.status === 201) {
         setSuccessMessage("Registration successful! Redirecting to login...");
         setTimeout(() => {
-          router.push("/login"); // ✅ Redirect to login page
+          router.push("/login"); 
         }, 2000);
       } else {
         setErrorMessage((prev) => ({ ...prev, username: "Registration failed. Try again." }));
@@ -125,15 +123,15 @@ export default function RegisterScreen() {
         </View>
       </View>
 
-      {/* Success Message */}
+      
       {successMessage ? <Text className="text-green-500 mb-4">{successMessage}</Text> : null}
 
-      {/* Register Button */}
+      
       <Pressable className="w-full max-w-xs py-3 rounded-lg items-center mt-3 bg-primary" onPress={handleRegister}>
         <Text className="text-lg font-bold text-white">Register</Text>
       </Pressable>
 
-      {/* Login Link */}
+      
       <Text className="mt-6 text-base">
         <Text className="text-text">Already have an account? </Text>
         <Text className="font-bold text-primary" onPress={handleLogin}>

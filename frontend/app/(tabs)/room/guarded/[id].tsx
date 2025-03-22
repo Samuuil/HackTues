@@ -6,7 +6,7 @@ export default function LocationBPMDisplay() {
     latitude: number;
     longitude: number;
   } | null>(null);
-  const [bpm, setBpm] = useState<number>(60); // Mock BPM
+  const [bpm, setBpm] = useState<number>(60); 
 
   useEffect(() => {
     (async () => {

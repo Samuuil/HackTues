@@ -9,7 +9,6 @@ import * as Device from 'expo-device';
 import { useFonts } from 'expo-font';
 import { registerForPushNotificationsAsync } from "@/utils/notifications";
 
-// Import Dancing Script from @expo-google-fonts for a soft, fancy font
 import { DancingScript_400Regular } from '@expo-google-fonts/dancing-script';
 
 export default function IndexPage() {
@@ -38,9 +37,8 @@ export default function IndexPage() {
     { text: "Join the movement today!", image: require("@/assets/images/endlessPossibilities.jpg") },
   ];
 
-  // Load the font using the useFonts hook
   const [fontsLoaded] = useFonts({
-    DancingScript_400Regular, // Soft, fancy font
+    DancingScript_400Regular, 
   });
 
   if (!fontsLoaded) {
@@ -52,9 +50,9 @@ export default function IndexPage() {
       <View className="items-center justify-center">
         <Image source={item.image} style={{ width: width * 0.75, height: height * 0.35, resizeMode: "contain" }} />
         <Text style={{
-          fontSize: 28, // Adjusted font size for a more elegant feel
-          fontFamily: 'DancingScript_400Regular', // Apply the soft, fancy font
-          color: '#5f4b8b', // Soft purple text color that complements the background
+          fontSize: 28,
+          fontFamily: 'DancingScript_400Regular',
+          color: '#5f4b8b', 
           textAlign: 'center',
           marginTop: 16,
           marginBottom: 20,
@@ -81,12 +79,12 @@ export default function IndexPage() {
         zIndex: 10,
       }}>
         <Text style={{
-          fontSize: 48, // Increased font size for a more dramatic effect
-          fontFamily: 'DancingScript_400Regular', // Elegant script font
+          fontSize: 48, 
+          fontFamily: 'DancingScript_400Regular', 
           fontWeight: 'bold',
-          color: '#5f4b8b', // Soft purple title color
+          color: '#5f4b8b',
           textTransform: 'uppercase',
-          letterSpacing: 2, // Slightly spaced letters for a more elegant look
+          letterSpacing: 2, 
         }}>
           Fallguard
         </Text>

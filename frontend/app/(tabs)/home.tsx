@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { View, TouchableOpacity, Text, ActivityIndicator, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import { colors } from "@/theme/colors"; // Import colors from your theme
+import { colors } from "@/theme/colors";
 import axios from "axios";
-import { getToken, getUserId } from "./storageAuth"; // Import getToken and getUserId functions
+import { getToken, getUserId } from "./storageAuth";
 import { getURL } from "../../../frontend/getURL";
 
 export default function HomeScreen() {
   const [rooms, setRooms] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [userId, setUserId] = useState<string | null>(null); // Store userId
-  const [token, setToken] = useState<string | null>(null); // Store token
+  const [userId, setUserId] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
   const url = getURL();
 
@@ -18,9 +18,6 @@ export default function HomeScreen() {
     const fetchAuthData = async () => {
       const fetchedUserId = await getUserId();
       const fetchedToken = await getToken();
-      console.log("aaaaaaaaaa");
-      console.log("Fetched user ID and token:", fetchedUserId, fetchedToken);
-
       if (!fetchedUserId || !fetchedToken) {
         console.error("No user ID or token found");
         return;
@@ -35,13 +32,11 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const fetchRooms = async () => {
-      if (!userId || !token) return; // Ensure credentials are available
+      if (!userId || !token) return;
       try {
         const { data } = await axios.get(`${url}/rooms/${userId}`, {
           headers: { bearer: `Bearer ${token}` },
         });
-  
-        console.log("Fetched rooms:", data);
   
         setRooms(
           data.map((room: any) => ({
@@ -57,15 +52,14 @@ export default function HomeScreen() {
     };
   
     fetchRooms();
-  }, [userId, token]); // Runs when userId and token are updated
-  
+  }, [userId, token]);
 
   const handleBoxPress = (id: number) => {
     router.push(`/room/${id}`);
   };
 
   const generateRoomName = () => {
-    return Math.floor(Math.random() * 1000) + 1; // Generates a number between 1 and 1,000,000
+    return Math.floor(Math.random() * 1000) + 1;
   };
 
   const handleCreateRoom = async () => {
@@ -91,15 +85,11 @@ export default function HomeScreen() {
         }
       );
   
-      console.log("New room created:", data);
-      console.log("Fetched rooms data:", JSON.stringify(data, null, 2));
-  
       setRooms((prevRooms) => [...prevRooms, { id: data.id, name: data.name || "Unnamed Room" }]);
     } catch (error) {
       console.error("Error creating room:", error);
     }
   };
-  
 
   if (loading) {
     return (

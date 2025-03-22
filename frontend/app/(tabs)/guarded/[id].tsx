@@ -18,8 +18,7 @@ export default function App() {
   const [initialCoords, setInitialCoords] = useState<{ x: number; z: number } | null>(null);
   const [outOfBounds, setOutOfBounds] = useState(false);
 
-  // Define the square's boundaries (in meters or a chosen unit)
-  const SQUARE_SIZE = 20000; // 20 km by 20 km square (you can adjust this)
+  const SQUARE_SIZE = 20000;
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(token => {
@@ -32,7 +31,6 @@ export default function App() {
 
     socket.onopen = async () => {
       setConnected(true);
-      console.log("Connected to WebSocket server");
 
       try {
         const memberId = await getMemberId();
@@ -51,7 +49,6 @@ export default function App() {
 
     socket.onmessage = async (event) => {
       try {
-        console.log("Received:", event.data);
         const data = JSON.parse(event.data);
 
         if (data.payload.data) {
@@ -60,14 +57,11 @@ export default function App() {
           const newGpsCoords = data.payload.data.gps;
 
           if (!initialCoords) {
-            // Store the first received x and z coordinates
             setInitialCoords({ x: newGpsCoords.lat, z: newGpsCoords.lon });
           } else {
-            // Check if the current x, z are within the square's boundaries
             const deltaX = Math.abs(newGpsCoords.lat - initialCoords.x);
             const deltaZ = Math.abs(newGpsCoords.lon - initialCoords.z);
 
-            // If either delta is greater than the square size, it's out of bounds
             if (deltaX > SQUARE_SIZE || deltaZ > SQUARE_SIZE) {
               if (!outOfBounds) {
                 setOutOfBounds(true);
@@ -81,7 +75,7 @@ export default function App() {
                 });
               }
             } else {
-              setOutOfBounds(false); // Reset if within bounds
+              setOutOfBounds(false);
             }
           }
         }
@@ -92,7 +86,6 @@ export default function App() {
 
     socket.onclose = () => {
       setConnected(false);
-      console.log("Disconnected from WebSocket server");
     };
 
     return () => {
